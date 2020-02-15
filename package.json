@@ -1,0 +1,14 @@
+{
+  "name": "sunsama-assessment-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Evan Muller",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "graphql-yoga": "^1.18.3"
+  }
+}
