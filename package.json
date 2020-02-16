@@ -5,10 +5,15 @@
   "main": "index.js",
   "author": "Evan Muller",
   "license": "ISC",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.2"
   },
   "dependencies": {
-    "graphql-yoga": "^1.18.3"
+    "graphql-yoga": "^1.18.3",
+    "mongoose": "^5.9.1"
   }
 }
