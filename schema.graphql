@@ -1,13 +1,27 @@
+scalar DateTime
+
 type Task {
     id: ID!
     name: String!
+    date: DateTime!
+    complete: Boolean!
 }
 
 type Query {
     tasks: [Task]
-    description: String
+    tasksOnDay(day: String!): [Task]
 }
 
 type Mutation {
     createTask(name: String!): Task!
+    updateTask(id: ID!, name: String!, date: DateTime!, complete: Boolean!): Task!
+    moveTask(id: ID!, date: DateTime!): Task!
+    completeTask(id: ID!, complete: Boolean!): Task!
+    deleteTask(id: ID!): Boolean!
+}
+
+type Subscription {
+    newTask: Task
+    updatedTask: Task
+    deletedTask: ID
 }

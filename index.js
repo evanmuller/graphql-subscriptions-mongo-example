@@ -1,4 +1,4 @@
-const { GraphQLServer } = require("graphql-yoga");
+const { GraphQLServer, PubSub } = require("graphql-yoga");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const resolvers = require("./resolvers");
@@ -6,11 +6,6 @@ const resolvers = require("./resolvers");
 dotenv.config();
 
 const { PORT, DB_URL } = process.env;
-
-const server = new GraphQLServer({
-  typeDefs: "./schema.graphql",
-  resolvers,
-});
 
 mongoose
   .connect(DB_URL, {
@@ -25,6 +20,14 @@ mongoose
   .catch(error => {
     console.log("Error connecting to Mongo", error);
   });
+
+const server = new GraphQLServer({
+  typeDefs: "./schema.graphql",
+  resolvers,
+  context: {
+    pubsub: new PubSub(),
+  },
+});
 
 server.start({ port: PORT }, ({ port }) =>
   console.log(
