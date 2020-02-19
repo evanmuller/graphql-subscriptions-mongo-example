@@ -1,5 +1,16 @@
 scalar DateTime
 
+enum TaskMutation {
+    CREATED
+    UPDATED
+    DELETED
+}
+
+type TaskSubscriptionPayload {
+    mutation: TaskMutation!
+    task: Task!
+}
+
 type Task {
     id: ID!
     name: String!
@@ -9,7 +20,7 @@ type Task {
 
 type Query {
     tasks: [Task]
-    tasksOnDay(day: String!): [Task]
+    tasksOnDay(day: DateTime!): [Task]
 }
 
 type Mutation {
@@ -21,7 +32,5 @@ type Mutation {
 }
 
 type Subscription {
-    newTask: Task
-    updatedTask: Task
-    deletedTask: ID
+    taskOnDay(day: DateTime!): TaskSubscriptionPayload
 }
