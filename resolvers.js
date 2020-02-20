@@ -1,5 +1,4 @@
 const moment = require("moment");
-const { withFilter } = require("graphql-yoga");
 const { Task } = require("./models");
 
 const updateTask = async (id, updates, pubsub) => {
@@ -16,8 +15,8 @@ const updateTask = async (id, updates, pubsub) => {
     },
   );
 
-  pubsub.publish("taskOnDay", {
-    taskOnDay: {
+  pubsub.publish("task", {
+    taskData: {
       mutation: "UPDATED",
       task,
     },
@@ -62,8 +61,8 @@ const resolvers = {
 
       await task.save();
 
-      pubsub.publish("taskOnDay", {
-        taskOnDay: {
+      pubsub.publish("task", {
+        taskData: {
           mutation: "CREATED",
           task,
         },
@@ -79,8 +78,8 @@ const resolvers = {
     deleteTask: async (_, { id }, { pubsub }) => {
       const task = await Task.findOneAndDelete({ _id: id });
 
-      pubsub.publish("taskOnDay", {
-        taskOnDay: {
+      pubsub.publish("task", {
+        taskData: {
           mutation: "DELETED",
           task,
         },
@@ -90,24 +89,8 @@ const resolvers = {
     },
   },
   Subscription: {
-    taskOnDay: {
-      subscribe: withFilter(
-        (_, {}, { pubsub }) => pubsub.asyncIterator("taskOnDay"),
-        (taskSubscriptionPayload, variables) => {
-          const taskDate = moment.utc(
-            taskSubscriptionPayload.taskOnDay.task.date,
-          );
-
-          const { day } = variables;
-
-          return taskDate.isBetween(
-            moment.utc(day).startOf("day"),
-            moment.utc(day).endOf("day"),
-            null,
-            "[]",
-          );
-        },
-      ),
+    taskData: {
+      subscribe: (_, {}, { pubsub }) => pubsub.asyncIterator("task"),
     },
   },
 };
