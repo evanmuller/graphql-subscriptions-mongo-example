@@ -13,6 +13,12 @@ const Task = mongoose.model("Task", {
     type: Boolean,
     required: true,
   },
+  notes: {
+    type: String,
+  },
+  timeAllotment: {
+    type: String,
+  },
 });
 
 module.exports = { Task };

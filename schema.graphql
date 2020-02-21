@@ -1,4 +1,5 @@
 scalar DateTime
+scalar Duration
 
 enum TaskMutation {
     CREATED
@@ -16,6 +17,8 @@ type Task {
     name: String!
     date: DateTime!
     complete: Boolean!
+    notes: String,
+    timeAllotment: Duration,
 }
 
 type Query {
@@ -25,9 +28,7 @@ type Query {
 
 type Mutation {
     createTask(name: String!, date: DateTime!): Task!
-    updateTask(id: ID!, name: String!, date: DateTime!, complete: Boolean!): Task!
-    moveTask(id: ID!, date: DateTime!): Task!
-    completeTask(id: ID!, complete: Boolean!): Task!
+    updateTask(id: ID!, name: String, date: DateTime, complete: Boolean, notes: String, timeAllotment: Duration): Task!
     deleteTask(id: ID!): Boolean!
 }
 
