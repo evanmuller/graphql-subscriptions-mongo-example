@@ -24,7 +24,7 @@ type Query {
 }
 
 type Mutation {
-    createTask(name: String!): Task!
+    createTask(name: String!, date: DateTime!): Task!
     updateTask(id: ID!, name: String!, date: DateTime!, complete: Boolean!): Task!
     moveTask(id: ID!, date: DateTime!): Task!
     completeTask(id: ID!, complete: Boolean!): Task!

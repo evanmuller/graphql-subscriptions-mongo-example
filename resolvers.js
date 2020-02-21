@@ -1,19 +1,8 @@
-const moment = require("moment");
+const { DateTime } = require("luxon");
 const { Task } = require("./models");
 
 const updateTask = async (id, updates, pubsub) => {
-  const task = await Task.findOneAndUpdate(
-    { _id: id },
-    updates.date // If there's a date, convert it to UTC.
-      ? {
-          ...updates,
-          date: moment.utc(updates.date).toDate(),
-        }
-      : updates,
-    {
-      new: true,
-    },
-  );
+  const task = await Task.findOneAndUpdate({ _id: id }, updates, { new: true });
 
   pubsub.publish("task", {
     taskData: {
@@ -27,37 +16,24 @@ const updateTask = async (id, updates, pubsub) => {
 
 const resolvers = {
   Query: {
-    tasks: () => Task.find(), // A real application would have users, but we're going to skip that for this.
+    tasks: () => Task.find(), // A real application would have users :)
     tasksOnDay: (_, { day }) => {
-      // A real application would store timezone offsets, for this, everything will be UTC.
-
-      const startOfDay = moment
-        .utc(day)
-        .startOf("day")
-        .toDate();
-
-      const endOfDay = moment
-        .utc(day)
-        .endOf("day")
-        .toDate();
+      const dayDateTime = DateTime.fromISO(day).setZone("utc");
+      const start = dayDateTime.startOf("day");
+      const end = dayDateTime.endOf("day");
 
       return Task.find({
         date: {
-          $gte: startOfDay,
-          $lte: endOfDay,
+          $gte: start.toJSDate(),
+          $lte: end.toJSDate(),
         },
       });
     },
   },
   Mutation: {
-    createTask: async (_, { name }, { pubsub }) => {
-      const task = new Task({
-        name,
-        date: moment()
-          .utc()
-          .toDate(),
-        complete: false,
-      });
+    createTask: async (_, { name, date }, { pubsub }) => {
+      // In production it might be a good idea to store the IANA timezone as well as the time
+      const task = new Task({ name, date, complete: false });
 
       await task.save();
 
