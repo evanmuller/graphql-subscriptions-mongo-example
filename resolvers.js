@@ -1,18 +1,5 @@
-const { DateTime } = require("luxon");
+const { DateTime, Duration } = require("luxon");
 const { Task } = require("./models");
-
-const updateTask = async (id, updates, pubsub) => {
-  const task = await Task.findOneAndUpdate({ _id: id }, updates, { new: true });
-
-  pubsub.publish("task", {
-    taskData: {
-      mutation: "UPDATED",
-      task,
-    },
-  });
-
-  return task;
-};
 
 const resolvers = {
   Query: {
@@ -46,11 +33,20 @@ const resolvers = {
 
       return task;
     },
-    updateTask: (_, { id, name, date, complete }, { pubsub }) =>
-      updateTask(id, { name, date, complete }, pubsub),
-    moveTask: (_, { id, date }, { pubsub }) => updateTask(id, { date }, pubsub),
-    completeTask: (_, { id, complete }, { pubsub }) =>
-      updateTask(id, { complete }, pubsub),
+    updateTask: async (_, { id, ...updates }, { pubsub }) => {
+      const task = await Task.findOneAndUpdate({ _id: id }, updates, {
+        new: true,
+      });
+
+      pubsub.publish("task", {
+        taskData: {
+          mutation: "UPDATED",
+          task,
+        },
+      });
+
+      return task;
+    },
     deleteTask: async (_, { id }, { pubsub }) => {
       const task = await Task.findOneAndDelete({ _id: id });
 
