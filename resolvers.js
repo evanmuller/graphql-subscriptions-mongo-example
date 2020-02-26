@@ -9,6 +9,12 @@ const resolvers = {
       const start = dayDateTime.startOf("day");
       const end = dayDateTime.endOf("day");
 
+      console.log("Tasks on day", day);
+      console.log("Start of day", start.toISO());
+      console.log("End of day", end.toISO());
+      console.log("Start of day js date", start.toJSDate());
+      console.log("End of day js date", end.toJSDate());
+
       return Task.find({
         date: {
           $gte: start.toJSDate(),
