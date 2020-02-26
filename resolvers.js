@@ -5,7 +5,7 @@ const resolvers = {
   Query: {
     tasks: () => Task.find(), // A real application would have users :)
     tasksOnDay: (_, { day }) => {
-      const dayDateTime = DateTime.fromISO(day).setZone("utc");
+      const dayDateTime = DateTime.fromISO(day);
       const start = dayDateTime.startOf("day");
       const end = dayDateTime.endOf("day");
 
