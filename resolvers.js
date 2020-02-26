@@ -6,19 +6,32 @@ const resolvers = {
     tasks: () => Task.find(), // A real application would have users :)
     tasksOnDay: (_, { day }) => {
       const dayDateTime = DateTime.fromISO(day);
-      const start = dayDateTime.startOf("day").toUTC();
-      const end = dayDateTime.endOf("day").toUTC();
+      const offsetMinutes = dayDateTime.get("offset");
 
-      console.log("Tasks on day", day);
-      console.log("Start of day", start.toISO());
-      console.log("End of day", end.toISO());
-      console.log("Start of day js date", start.toJSDate());
-      console.log("End of day js date", end.toJSDate());
+      const utcDay = DateTime.utc(
+        dayDateTime.get("year"),
+        dayDateTime.get("month"),
+        dayDateTime.get("day"),
+      );
+
+      const startUtc = utcDay.startOf("day");
+      const endUtc = utcDay.endOf("day");
+
+      console.log("offset", offsetMinutes);
+
+      const startForOffset = startUtc.minus({ minutes: offsetMinutes });
+      const endForOffset = endUtc.minus({ minutes: offsetMinutes });
+
+      console.log("Tasks on day", dayDateTime.toISO());
+      console.log("Start of day in utc", startUtc.toISO());
+      console.log("End of day in utc", endUtc.toISO());
+      console.log("Start of day minus offset", startForOffset.toISO());
+      console.log("End of day minus offset", endForOffset.toISO());
 
       return Task.find({
         date: {
-          $gte: start.toJSDate(),
-          $lte: end.toJSDate(),
+          $gte: startForOffset.toJSDate(),
+          $lte: endForOffset.toJSDate(),
         },
       });
     },
