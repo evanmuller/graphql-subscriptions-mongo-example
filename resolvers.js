@@ -5,7 +5,10 @@ const resolvers = {
   Query: {
     tasks: () => Task.find(), // A real application would have users :)
     tasksOnDay: (_, { day }) => {
-      const dayDateTime = DateTime.fromISO(day);
+      console.log("day string", day);
+
+      const dayDateTime = DateTime.fromISO(day, { setZone: true });
+
       const offsetMinutes = dayDateTime.get("offset");
 
       const utcDay = DateTime.utc(
