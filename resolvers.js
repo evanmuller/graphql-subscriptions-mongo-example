@@ -1,4 +1,4 @@
-const { DateTime, Duration } = require("luxon");
+const { DateTime } = require("luxon");
 const { Task } = require("./models");
 
 const resolvers = {
@@ -6,8 +6,8 @@ const resolvers = {
     tasks: () => Task.find(), // A real application would have users :)
     tasksOnDay: (_, { day }) => {
       const dayDateTime = DateTime.fromISO(day);
-      const start = dayDateTime.startOf("day");
-      const end = dayDateTime.endOf("day");
+      const start = dayDateTime.startOf("day").toUTC();
+      const end = dayDateTime.endOf("day").toUTC();
 
       console.log("Tasks on day", day);
       console.log("Start of day", start.toISO());
