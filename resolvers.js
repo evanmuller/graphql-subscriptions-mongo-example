@@ -5,10 +5,7 @@ const resolvers = {
   Query: {
     tasks: () => Task.find(), // A real application would have users :)
     tasksOnDay: (_, { day }) => {
-      console.log("day string", day);
-
       const dayDateTime = DateTime.fromISO(day, { setZone: true });
-
       const offsetMinutes = dayDateTime.get("offset");
 
       const utcDay = DateTime.utc(
@@ -20,16 +17,8 @@ const resolvers = {
       const startUtc = utcDay.startOf("day");
       const endUtc = utcDay.endOf("day");
 
-      console.log("offset", offsetMinutes);
-
       const startForOffset = startUtc.minus({ minutes: offsetMinutes });
       const endForOffset = endUtc.minus({ minutes: offsetMinutes });
-
-      console.log("Tasks on day", dayDateTime.toISO());
-      console.log("Start of day in utc", startUtc.toISO());
-      console.log("End of day in utc", endUtc.toISO());
-      console.log("Start of day minus offset", startForOffset.toISO());
-      console.log("End of day minus offset", endForOffset.toISO());
 
       return Task.find({
         date: {
